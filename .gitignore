@@ -1,1 +1,8 @@
+# IRS data
 zipcode2016*
+
+# PyCharm
+.idea*
+
+# Virtual Environment
+venv*
