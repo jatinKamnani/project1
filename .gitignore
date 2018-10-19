@@ -1,5 +1,5 @@
-# IRS data
-zipcode2016*
+# IRS data - we're using 2013.
+zipcode2013*
 
 # PyCharm
 .idea*
