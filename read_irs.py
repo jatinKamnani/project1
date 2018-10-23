@@ -22,8 +22,11 @@ import os.path
 # CONSTANTS
 
 # File paths:
+# Folder w/ IRS data in it.
 IRS_DIR = 'zipcode2013'
+# IRS data file name.
 IRS_FILE = 'zipcodeagi13.csv'
+# Full path to IRS data file.
 IRS_FILE_PATH = os.path.join('.', IRS_DIR, IRS_FILE)
 
 # Columns to read. Keys are columns, values are brief explanations.

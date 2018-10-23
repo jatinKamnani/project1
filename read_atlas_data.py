@@ -12,9 +12,11 @@ import os.path
 
 # File paths:
 
-
-HEALTH_DATA_COUNTY_FILE = 'C:/Users/jatin/Desktop/project1/project1/datasets/cumulative_data_2013_county.csv'
-HEALTH_DATA_STATE_FILE = 'C:/Users/jatin/Desktop/project1/project1/datasets/cumulative_data_2013_state.csv'
+DATA_DIR = 'datasets'
+HEALTH_DATA_COUNTY_FILE = \
+    os.path.join(DATA_DIR, 'cumulative_data_2013_county.csv')
+HEALTH_DATA_STATE_FILE = \
+    os.path.join(DATA_DIR, 'cumulative_data_2013_state.csv')
 ########################################################################
 # FUNCTIONS
 
