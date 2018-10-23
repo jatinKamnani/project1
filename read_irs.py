@@ -50,7 +50,8 @@ def read_data():
     """Function to simply read the IRS data from file."""
     irs_data = pd.read_csv(IRS_FILE_PATH, header=0,
                            usecols=list(COLUMNS.keys()))
-    pass
+
+    return irs_data
 
 
 ########################################################################
