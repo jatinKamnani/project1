@@ -9,7 +9,7 @@ import numpy as np
 
 
 class FipsZipHandler:
-    dataFilePrefix = '../data/'
+    dataFilePrefix = 'datasets/'
     fipsToZipFile = 'fipsToZip.csv'
     zipToFipsFile = 'zipToFips.csv'
     fipsToNameAndStateFile = 'fipsToNameAndState.csv'
@@ -73,3 +73,7 @@ class FipsZipHandler:
         #The state and the county for a zip
         return self.getCountyNameAndStateForFips(
                 self.getFipsForZipcode(zipcode))
+
+if __name__ == '__main__':
+    obj = FipsZipHandler()
+    pass
