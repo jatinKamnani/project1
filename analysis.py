@@ -48,14 +48,6 @@ def main():
     # Add column to irs_data for fips code.
     irs_data['FIPS'] = irs_fips
 
-    # Remove leading 0's from IRS FIPS codes (Food Environment Atlas
-    # doesn't have them, and it's easier/more robust to just drop the
-    # leading 0's.
-    irs_data['FIPS'] = irs_data['FIPS'].str.replace(pat='^0', repl='',
-                                                    regex=True)
-    # Sanity check (should evaluate to False, and it does):
-    # irs_data['FIPS'].str.startswith('0').any()
-
     # Check to see if the county data has duplicate FIPS codes. Turns
     # out it doesn't.
     # county_duplicate_fips = food_county.duplicated()
