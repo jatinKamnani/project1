@@ -52,20 +52,22 @@ class FipsZipHandler:
         return fipsToZipsMap, zipToFipsMap, fipsToCountyNameAndStateMap
     
     def getFipsForZipcode(self, zipcode): #Returns a string containing the fips
-        if  zipcode not in self.zipToFipsMap.keys():
-            return 'fips not found for zipcode'
+        # Return NaN if the zip code isn't in the map.
+        if zipcode not in self.zipToFipsMap.keys():
+            return np.NaN
+        # Look up and return zip code
         return self.zipToFipsMap[zipcode][0]
         
     def getZipcodesForFips(self, fips): #Returns a list containing all the zips
         #in the county
-        if  fips not in self.fipsToZipMap.keys():
-            return 'zipcode not found for fips'
+        if fips not in self.fipsToZipMap.keys():
+            return np.NaN
         return self.fipsToZipMap[fips]
     
     def getCountyNameAndStateForFips(self, fips): #Returns a map containing
         #The state and the county for a fips
-        if  fips not in self.fipsToCountyNameAndStateMap.keys():
-            return 'fips not found'
+        if fips not in self.fipsToCountyNameAndStateMap.keys():
+            return np.NaN
         return {'state': self.fipsToCountyNameAndStateMap[fips][1], 
                 'county': self.fipsToCountyNameAndStateMap[fips][0]}
     
