@@ -13,13 +13,13 @@ import os.path
 # File paths:
 DATA_DIR = 'datasets'
 HEALTH_DATA_COUNTY_FILE = \
-    os.path.join(DATA_DIR, 'cumulative_data_2013_county.csv')
+    os.path.join(DATA_DIR, 'Food_Atlas_County_2013.csv')
 HEALTH_DATA_STATE_FILE = \
     os.path.join(DATA_DIR, 'cumulative_data_2013_state.csv')
 
 # Data types for the county data.
 COUNTY_DTYPES = {'FIPS': str, 'State': str, 'County': str,
-                 'Population Estimate, 2013': int, 'VLFOODSEC_13_15': float,
+                 'Population Estimate, 2013': float, 'VLFOODSEC_13_15': float,
                  'FOODINSEC_13_15': float, 'PCT_DIABETES_ADULTS13': float,
                  'PCT_OBESE_ADULTS13': float}
 
@@ -31,6 +31,7 @@ def read_data():
     """Function to simply read the atlas data from file."""
     health_county_data = pd.read_csv(HEALTH_DATA_COUNTY_FILE,
                                      dtype=COUNTY_DTYPES)
+
     health_state_data = pd.read_csv(HEALTH_DATA_STATE_FILE)
     # print(health_county_data.head(),health_state_data.head())
 
