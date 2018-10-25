@@ -15,7 +15,6 @@ import numpy as np
 # Project imports:
 import read_atlas_data
 import read_irs
-from fipsZipHandler import FipsZipHandler
 
 ########################################################################
 # FUNCTIONS
@@ -24,12 +23,7 @@ from fipsZipHandler import FipsZipHandler
 def main():
     """Main function"""
     # Read the IRS data
-    irs_data = read_irs.read_data()
-
-    # Convert zipcode to a string. Note: it'd be more efficient to
-    # define the data type when the file is read, but that can be a real
-    # hassle.
-    irs_data['zipcode'] = irs_data['zipcode'].astype(str)
+    irs_data = read_irs.get_irs_data()
 
     # Notify.
     print('IRS data loaded. Column descriptions:')
@@ -38,15 +32,6 @@ def main():
     # Read Food Environment Atlas data
     food_county, food_state = read_atlas_data.read_data()
     print('Food Environment Atlas data loaded.')
-
-    # Initialize FipsZipHandler object
-    fz_obj = FipsZipHandler()
-
-    # Translate IRS data zip codes to FIPS codes.
-    irs_fips = [fz_obj.getFipsForZipcode(z) for z in irs_data['zipcode']]
-
-    # Add column to irs_data for fips code.
-    irs_data['FIPS'] = irs_fips
 
     # Check to see if the county data has duplicate FIPS codes. Turns
     # out it doesn't.
@@ -58,6 +43,19 @@ def main():
     # join on the IRS data
     joined_data = irs_data.join(food_county.set_index('FIPS'), on='FIPS')
     pass
+
+
+def aggregate_irs_by_fips(irs_data):
+    """Function to combine IRS data by FIPS code.
+
+    NOTE: The first draft will be done in a relatively crude way. If we
+    need something more sophisticated later, we can do it.
+    """
+    # Get the listing of unique FIPS codes in the IRS data.
+    unique_fips = irs_data['FIPS'].unique()
+
+    # Loop over the unique fips codes and aggregate.
+
 
 ########################################################################
 # MAIN

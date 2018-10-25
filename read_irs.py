@@ -18,6 +18,9 @@ import pandas as pd
 # Standard Library:
 import os.path
 
+# Project modules:
+from fipsZipHandler import FipsZipHandler
+
 ########################################################################
 # CONSTANTS
 
@@ -51,12 +54,41 @@ def read_data():
     irs_data = pd.read_csv(IRS_FILE_PATH, header=0,
                            usecols=list(COLUMNS.keys()))
 
+    # Convert zipcode to a string. Note: it'd be more efficient to
+    # define the data type when the file is read, but that can be a real
+    # hassle.
+    irs_data['zipcode'] = irs_data['zipcode'].astype(str)
+
     return irs_data
 
+
+def lookup_fips(irs_data):
+    """Function to associate FIPS codes based on IRS zipcodes"""
+    # Initialize FipsZipHandler object
+    fz_obj = FipsZipHandler()
+
+    # Translate IRS data zip codes to FIPS codes.
+    irs_fips = [fz_obj.getFipsForZipcode(z) for z in irs_data['zipcode']]
+
+    # Add column to irs_data for fips code.
+    irs_data['FIPS'] = irs_fips
+
+    # Return.
+    return irs_data
+
+
+def get_irs_data():
+    """Main function to load, map, and aggregate IRS data.
+    """
+    irs_data = read_data()
+
+    irs_data = lookup_fips(irs_data)
+
+    return irs_data
 
 ########################################################################
 # MAIN
 
 
 if __name__ == '__main__':
-    read_data()
+    get_irs_data()
