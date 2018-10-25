@@ -18,6 +18,9 @@ import pandas as pd
 # Standard Library:
 import os.path
 
+# Project modules:
+from fipsZipHandler import FipsZipHandler
+
 ########################################################################
 # CONSTANTS
 
@@ -51,12 +54,68 @@ def read_data():
     irs_data = pd.read_csv(IRS_FILE_PATH, header=0,
                            usecols=list(COLUMNS.keys()))
 
+    # Convert zipcode to a string. Note: it'd be more efficient to
+    # define the data type when the file is read, but that can be a real
+    # hassle.
+    irs_data['zipcode'] = irs_data['zipcode'].astype(str)
+
+    # Convert STATEFIPS to a string. Same efficiency note as above.
+    irs_data['STATEFIPS'] = irs_data['STATEFIPS'].astype(str)
+
     return irs_data
 
+
+def lookup_fips(irs_data):
+    """Function to associate FIPS codes based on IRS zipcodes"""
+    # Initialize FipsZipHandler object
+    fz_obj = FipsZipHandler()
+
+    # Translate IRS data zip codes to FIPS codes.
+    irs_fips = [fz_obj.getFipsForZipcode(z) for z in irs_data['zipcode']]
+
+    # Add column to irs_data for FIPS code.
+    irs_data['FIPS'] = irs_fips
+
+    # Return.
+    return irs_data
+
+
+def aggregate_by_fips(irs_data):
+    """Function to combine IRS data by FIPS code.
+
+    NOTE: This doesn't necessarily need to be in a function since pandas
+    makes this so easy.
+    """
+    # Drop NaN state values.
+    irs_data.dropna(inplace=True)
+
+    # Use groupby to aggregate.
+    aggregated_data = irs_data.groupby(['FIPS', 'agi_stub']).sum()
+
+    # For simplicity, change the multi-index into columns.
+    # TODO: We may want to keep the multi-index around?
+    aggregated_data.reset_index(inplace=True)
+
+    return aggregated_data
+
+
+def get_irs_data():
+    """Main function to load, map, and aggregate IRS data.
+    """
+    # Read file.
+    data_no_aggregation = read_data()
+
+    # Get FIPS for all zip codes.
+    data_no_aggregation = lookup_fips(data_no_aggregation)
+
+    # Aggregate by FIPS codes.
+    data_aggregated = aggregate_by_fips(data_no_aggregation)
+
+    return data_aggregated, data_no_aggregation
 
 ########################################################################
 # MAIN
 
 
 if __name__ == '__main__':
-    read_data()
+    get_irs_data()
