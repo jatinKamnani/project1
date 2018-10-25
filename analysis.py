@@ -23,7 +23,7 @@ import read_irs
 def main():
     """Main function"""
     # Read the IRS data
-    irs_data = read_irs.get_irs_data()
+    irs_data_agg, irs_data_no_agg = read_irs.get_irs_data()
 
     # Notify.
     print('IRS data loaded. Column descriptions:')
@@ -41,21 +41,15 @@ def main():
     # Join the IRS data and county Food Environment Atlas data by FIPS
     # code. Since the IRS data has multiple entries per FIPS code, we'll
     # join on the IRS data
-    joined_data = irs_data.join(food_county.set_index('FIPS'), on='FIPS')
+    joined_data = irs_data_agg.join(food_county.set_index('FIPS'), on='FIPS')
+
+    # How many NaN's do we have?
+    total_rows = joined_data.shape[0]
+    nan_rows = joined_data.isnull().sum().max()
+    joined_data.dropna(inplace=True)
+    print('In the joined data, {} rows were be dropped out of {}.'.format(
+        nan_rows, total_rows))
     pass
-
-
-def aggregate_irs_by_fips(irs_data):
-    """Function to combine IRS data by FIPS code.
-
-    NOTE: The first draft will be done in a relatively crude way. If we
-    need something more sophisticated later, we can do it.
-    """
-    # Get the listing of unique FIPS codes in the IRS data.
-    unique_fips = irs_data['FIPS'].unique()
-
-    # Loop over the unique fips codes and aggregate.
-
 
 ########################################################################
 # MAIN
