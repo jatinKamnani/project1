@@ -15,7 +15,7 @@ DATA_DIR = 'datasets'
 HEALTH_DATA_COUNTY_FILE = \
     os.path.join(DATA_DIR, 'Food_Atlas_County_2013.csv')
 HEALTH_DATA_STATE_FILE = \
-    os.path.join(DATA_DIR, 'cumulative_data_2013_state.csv')
+    os.path.join(DATA_DIR, 'Food_Atlas_State_2013.csv')
 
 # Data types for the county data.
 COUNTY_DTYPES = {'FIPS': str, 'State': str, 'County': str,
