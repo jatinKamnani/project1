@@ -43,7 +43,8 @@ COLUMNS = {'STATEFIPS': 'State FIPS code',
            'MARS2': '# of joint returns',
            'MARS4': '# of head of household returns',
            'NUMDEP': '# of dependents',
-           'A00100': 'Adjusted gross income (AGI)'}
+           'A00100': 'Adjusted gross income (AGI)',
+           'A02650': 'Total income amount'}
 
 ########################################################################
 # FUNCTIONS
