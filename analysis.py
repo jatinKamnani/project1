@@ -12,12 +12,28 @@ import json
 import pandas as pd
 import numpy as np
 import plotly.offline
-import plotly.plotly as py
 import plotly.figure_factory as ff
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 
 # Project imports:
 import read_atlas_data
 import read_irs
+
+########################################################################
+# TWEAK MATPLOTLIB FOR IEEE STYLE
+mpl.rcParams['axes.titlesize'] = 8
+mpl.rcParams['axes.labelsize'] = 6
+mpl.rcParams['legend.fontsize'] = 6
+mpl.rcParams['font.family'] = 'serif'
+mpl.rcParams['font.serif'] = 'Times New Roman'
+mpl.rcParams['xtick.labelsize'] = 6
+mpl.rcParams['ytick.labelsize'] = 6
+mpl.rcParams['figure.figsize'] = (3.5, 1.64)
+# mpl.rcParams['lines.markersize'] = 2
+# mpl.rcParams['lines.markeredgewidth'] = 0.5
+mpl.rcParams['figure.dpi'] = 300
+
 
 ########################################################################
 # FUNCTIONS
@@ -53,7 +69,33 @@ def main():
     print('In the joined data, {} rows were be dropped out of {}.'.format(
         nan_rows, total_rows))
 
+    # Create maps for the various health factors.
     map_plots(joined_data)
+
+    # Create scatter plots:
+
+    # Plot pct obese vs. pct of tax returns filed in each agi_stub
+    scatter_plots(joined_data, health_column='PCT_OBESE_ADULTS13',
+                  income_column='N1_pct_of_FIPS', ylabel='Pct. Obese',
+                  filename='obese_scatter_N1.png')
+
+    # pct obese vs. pct of total people in each agi_stub
+    scatter_plots(joined_data, health_column='PCT_OBESE_ADULTS13',
+                  income_column='total_people_pct_of_FIPS',
+                  ylabel='Pct. Obese',
+                  filename='obese_scatter_total_people.png')
+
+    # pct diabetes vs. pct of tax returns filed in each agi_stub
+    scatter_plots(joined_data, health_column='PCT_DIABETES_ADULTS13',
+                  income_column='N1_pct_of_FIPS', ylabel='Pct. Diabetes',
+                  filename='diabetes_scatter_N1.png')
+
+    # pct diabetes vs. pct of total people in each agi_stb
+    scatter_plots(joined_data, health_column='PCT_DIABETES_ADULTS13',
+                  income_column='total_people_pct_of_FIPS',
+                  ylabel='Pct. Diabetes',
+                  filename='diabetes_scatter_total_people.png')
+
     pass
 
 
@@ -103,6 +145,43 @@ def map_plots(data):
                                binning_endpoints=pct_bins,
                                colorscale=colorscale)
     plotly.offline.plot(fig, filename='pct_obese.html')
+
+
+def scatter_plots(data, health_column, income_column, ylabel, filename):
+    """Method for creating scatter plots for each agi stub vs health"""
+
+    # Initialize figure. Let's make it the whole width of the paper,
+    # minus the 1" margins.
+    fig = plt.figure(figsize=[7.5, 1.64])
+
+    # Loop over all the agi stubs
+    for s in range(1, 7):
+        # Initialize axis.
+        ax = plt.subplot(1, 6, s)
+
+        # Get data for this agi_stub.
+        agi_bool = data['agi_stub'] == s
+        pct_in_fips = data[income_column][agi_bool] * 100
+
+        # Get health data. NOTE: This could be factored out of the loop.
+        health_data = data[health_column][agi_bool]
+
+        ax.plot(pct_in_fips, health_data, linestyle='None', marker='.',
+                markersize=1)
+
+        ax.set_ylabel(ylabel)
+        ax.set_xlabel('Pct. in AGI Stub')
+        ax.set_title('AGI Stub {}'.format(s))
+
+        # TODO: Regression lines?
+
+    # TODO: More layout tweaks:
+    # - Could do a shared y-axis for all the figures.
+    # - Always room for tweaking tight_layout parameters
+    # - Consider figure title, with reduced subplot titles
+    plt.tight_layout()
+    # TODO: Save .eps for report.
+    plt.savefig(filename + '.png')
 
 
 ########################################################################
