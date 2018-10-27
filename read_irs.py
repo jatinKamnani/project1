@@ -47,6 +47,17 @@ COLUMNS = {'STATEFIPS': 'State FIPS code',
            'A00100': 'Adjusted gross income (AGI)',
            'A02650': 'Total income amount'}
 
+COLUMN_DTYPES = {'STATEFIPS': np.str,
+           'STATE': np.str, 'zipcode': np.str,
+           'agi_stub': np.int64,
+           'N1': np.float64,
+           'MARS1': np.float64,
+           'MARS2': np.float64,
+           'MARS4': np.float64,
+           'NUMDEP': np.float64,
+           'A00100': np.float64,
+           'A02650': np.float64}
+
 ########################################################################
 # FUNCTIONS
 
@@ -54,15 +65,17 @@ COLUMNS = {'STATEFIPS': 'State FIPS code',
 def read_data():
     """Function to simply read the IRS data from file."""
     irs_data = pd.read_csv(IRS_FILE_PATH, header=0,
-                           usecols=list(COLUMNS.keys()))
+                           usecols=list(COLUMNS.keys()), dtype=COLUMN_DTYPES)
 
     # Convert zipcode to a string. Note: it'd be more efficient to
     # define the data type when the file is read, but that can be a real
-    # hassle.
-    irs_data['zipcode'] = irs_data['zipcode'].astype(str)
+    # hassle. However, not doing so causes leading zeros to be dropped
+    #in the FIPS and zipcodes. The information loss is during data read,
+    #So converting the datatype subsequently has no utility.
+    #irs_data['zipcode'] = irs_data['zipcode'].astype(str)
 
     # Convert STATEFIPS to a string. Same efficiency note as above.
-    irs_data['STATEFIPS'] = irs_data['STATEFIPS'].astype(str)
+    #irs_data['STATEFIPS'] = irs_data['STATEFIPS'].astype(str)
 
     return irs_data
 
