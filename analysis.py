@@ -11,6 +11,9 @@ import json
 # Installed packages:
 import pandas as pd
 import numpy as np
+import plotly.offline
+import plotly.plotly as py
+import plotly.figure_factory as ff
 
 # Project imports:
 import read_atlas_data
@@ -23,15 +26,11 @@ import read_irs
 def main():
     """Main function"""
     # Read the IRS data
-    irs_data_agg, irs_data_no_agg = read_irs.get_irs_data()
+    irs_data = read_irs.get_irs_data()
 
     # Notify.
     print('IRS data loaded. Column descriptions:')
     print(json.dumps(read_irs.COLUMNS, indent=2))
-
-    # Compute the wealth per person for the irs data.
-    irs_data_agg = wealth_per_person(irs_data_agg)
-    irs_data_no_agg = wealth_per_person(irs_data_no_agg)
 
     # Read Food Environment Atlas data
     food_county, food_state = read_atlas_data.read_data()
@@ -45,7 +44,7 @@ def main():
     # Join the IRS data and county Food Environment Atlas data by FIPS
     # code. Since the IRS data has multiple entries per FIPS code, we'll
     # join on the IRS data
-    joined_data = irs_data_agg.join(food_county.set_index('FIPS'), on='FIPS')
+    joined_data = irs_data.join(food_county.set_index('FIPS'), on='FIPS')
 
     # How many NaN's do we have?
     total_rows = joined_data.shape[0]
@@ -53,32 +52,37 @@ def main():
     joined_data.dropna(inplace=True)
     print('In the joined data, {} rows were be dropped out of {}.'.format(
         nan_rows, total_rows))
+
+
+    map_plots(joined_data)
     pass
 
 
-def wealth_per_person(irs_data):
-    """Estimate wealth per person with the IRS data.
+def map_plots(data):
+    """Do map plotting.
 
-    Note
+    plotly reference: https://plot.ly/python/county-choropleth/
     """
-    # Single returns + 2 * joint returns + number of dependents.
-    # NOTE: It seems that head of household (MARS4) is not mutually
-    # exclusive with MARS1. So we'll exclude it.
-    irs_data['total_people'] = (irs_data['MARS1'] + 2 * irs_data['MARS2']
-                                + irs_data['NUMDEP'])
+    # Plot percentage of lowest income people.
+    agi1_bool = data['agi_stub'] == 1
+    # Max pct for this on is 61.22
+    agi1_pct = (data['total_people_pct_of_FIPS'][agi1_bool] * 100).tolist()
+    agi1_fips = data['FIPS'][agi1_bool].tolist()
+    pct_bins = list(np.arange(10, 70, 10))
+    # colors from http://colorbrewer2.org
+    colorscale = ['#f0f9e8', '#ccebc5', '#a8ddb5', '#7bccc4', '#4eb3d3',
+                  '#2b8cbe', '#08589e']
+    fig = ff.create_choropleth(fips=agi1_fips, values=agi1_pct,
+                               round_legend_values=True,
+                               binning_endpoints=pct_bins,
+                               colorscale=colorscale)
+    plotly.offline.plot(fig, filename='pct_agi1.html')
+    
 
-    # Divide AGI by the number of people.
-    # NOTE: It would seem that the IRS AGI number needs to be multiplied
-    # by 1000. This is evidenced by taking irs_data['A00100']
-    # / irs_data['N1'] and noticing that all the values correctly fall
-    # in the irs_data['agi_stub'] categories.
-    irs_data['agi_per_person'] = irs_data['A00100'] / irs_data['total_people']
-
-    return irs_data
 
 ########################################################################
 # MAIN
 
 
 if __name__ == '__main__':
-    main()
+    data = main()

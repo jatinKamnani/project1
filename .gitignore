@@ -6,3 +6,6 @@ zipcode2013*
 
 # Virtual Environment
 venv*
+
+# pycache
+__pycache__*

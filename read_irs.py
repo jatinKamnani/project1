@@ -13,6 +13,7 @@ NOTE: The IRS data excludes those with a gross deficit
 # IMPORTS
 
 # Installed packages:
+import numpy as np
 import pandas as pd
 
 # Standard Library:
@@ -100,19 +101,66 @@ def aggregate_by_fips(irs_data):
     return aggregated_data
 
 
+def wealth_per_person(irs_data):
+    """Estimate wealth per person with the IRS data.
+
+    Note
+    """
+    # Single returns + 2 * joint returns + number of dependents.
+    # NOTE: It seems that head of household (MARS4) is not mutually
+    # exclusive with MARS1. So we'll exclude it.
+    irs_data['total_people'] = (irs_data['MARS1'] + 2 * irs_data['MARS2']
+                                + irs_data['NUMDEP'])
+
+    # Divide AGI by the number of people.
+    # NOTE: It would seem that the IRS AGI number needs to be multiplied
+    # by 1000. This is evidenced by taking irs_data['A00100']
+    # / irs_data['N1'] and noticing that all the values correctly fall
+    # in the irs_data['agi_stub'] categories.
+    irs_data['agi_per_person'] = np.rint(1000 * irs_data['A00100']
+                                         / irs_data['total_people'])
+
+    # Ensure NaN's are 0'ed out.
+    irs_data['agi_per_person'] = irs_data['agi_per_person'].fillna(0)
+
+    return irs_data
+
+
+def compute_percentages(irs_data):
+    """Compute pct of returns and pct of people for each FIPS code."""
+    # Sum returns and people by FIPS
+    totals = irs_data[['FIPS', 'N1', 'total_people']].groupby(['FIPS']).sum()
+
+    # Join the totals into the irs data
+    irs_data = irs_data.join(totals, on='FIPS', rsuffix='_total_for_FIPS')
+
+    # Compute percentages.
+    irs_data['N1_pct_of_FIPS'] = irs_data['N1'] / irs_data['N1_total_for_FIPS']
+    irs_data['total_people_pct_of_FIPS'] = \
+        (irs_data['total_people'] / irs_data['total_people_total_for_FIPS'])
+
+    return irs_data
+
+
 def get_irs_data():
     """Main function to load, map, and aggregate IRS data.
     """
     # Read file.
-    data_no_aggregation = read_data()
+    data = read_data()
 
     # Get FIPS for all zip codes.
-    data_no_aggregation = lookup_fips(data_no_aggregation)
+    data = lookup_fips(data)
 
     # Aggregate by FIPS codes.
-    data_aggregated = aggregate_by_fips(data_no_aggregation)
+    data = aggregate_by_fips(data)
 
-    return data_aggregated, data_no_aggregation
+    # Compute wealth per person.
+    data = wealth_per_person(data)
+
+    # Compute percentages of number of returns and total people.
+    data = compute_percentages(data)
+
+    return data
 
 ########################################################################
 # MAIN
