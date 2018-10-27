@@ -78,6 +78,9 @@ def lookup_fips(irs_data):
     # Add column to irs_data for FIPS code.
     irs_data['FIPS'] = irs_fips
 
+    # Investigate the NaN data.
+    nan_data = irs_data[irs_data.isnull().any(axis=1)]
+
     # Return.
     return irs_data
 

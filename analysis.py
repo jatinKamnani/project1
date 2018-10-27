@@ -53,7 +53,6 @@ def main():
     print('In the joined data, {} rows were be dropped out of {}.'.format(
         nan_rows, total_rows))
 
-
     map_plots(joined_data)
     pass
 
@@ -77,7 +76,6 @@ def map_plots(data):
                                binning_endpoints=pct_bins,
                                colorscale=colorscale)
     plotly.offline.plot(fig, filename='pct_agi1.html')
-    
 
 
 ########################################################################
