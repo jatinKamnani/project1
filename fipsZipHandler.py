@@ -38,7 +38,7 @@ class FipsZipHandler:
             for j in range(1, len(npArray[i])):
                 value += [npArray[i][j]]
             if key not in result.keys():
-                result[key] = value
+                result[str(int(key))] = value
             else:
                 result[key] = result[key] + value
         return result
@@ -54,6 +54,7 @@ class FipsZipHandler:
     def getFipsForZipcode(self, zipcode): #Returns a string containing the fips
         # Return NaN if the zip code isn't in the map.
         if zipcode not in self.zipToFipsMap.keys():
+            print('not found ', zipcode)
             return np.NaN
         # Look up and return zip code
         return self.zipToFipsMap[zipcode][0]
