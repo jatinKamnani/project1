@@ -77,6 +77,33 @@ def map_plots(data):
                                colorscale=colorscale)
     plotly.offline.plot(fig, filename='pct_agi1.html')
 
+    # Plot diabetes. We can still use agi1_bool - the diabetes rate is
+    # the same for all agi_stubs.
+    diabetes_pct = data['PCT_DIABETES_ADULTS13'][agi1_bool].tolist()
+    # We'll re-use the agi1_fips.
+    # New pct_bins (max for diabetes is 23.5:
+    pct_bins = list(np.arange(5, 26, 5))
+    colorscale = ['#f0f9e8', '#ccebc5', '#a8ddb5', '#7bccc4', '#43a2ca',
+                  '#0868ac']
+    fig = ff.create_choropleth(fips=agi1_fips, values=diabetes_pct,
+                               round_legend_values=True,
+                               binning_endpoints=pct_bins,
+                               colorscale=colorscale)
+    plotly.offline.plot(fig, filename='pct_diabetes.html')
+
+    # Plot obesity.
+    obesity_pct = data['PCT_OBESE_ADULTS13'][agi1_bool].tolist()
+    # We'll re-use the agi1_fips.
+    # New pct_bins (max for obesity is 47.6:
+    pct_bins = list(np.arange(8, 50, 8))
+    colorscale = ['#f0f9e8', '#ccebc5', '#a8ddb5', '#7bccc4', '#4eb3d3',
+                  '#2b8cbe', '#08589e']
+    fig = ff.create_choropleth(fips=agi1_fips, values=obesity_pct,
+                               round_legend_values=True,
+                               binning_endpoints=pct_bins,
+                               colorscale=colorscale)
+    plotly.offline.plot(fig, filename='pct_obese.html')
+
 
 ########################################################################
 # MAIN
