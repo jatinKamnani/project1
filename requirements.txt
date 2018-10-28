@@ -2,6 +2,8 @@ numpy
 pandas
 matplotlib
 plotly
+sklearn
+scipy
 # Plotly Choropleth maps require the following:
 geopandas==0.3.0
 pyshp==1.2.10

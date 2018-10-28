@@ -47,16 +47,23 @@ COLUMNS = {'STATEFIPS': 'State FIPS code',
            'A00100': 'Adjusted gross income (AGI)',
            'A02650': 'Total income amount'}
 
+# Describe each agi_stub. Dollar signs are escaped for Tex.
+AGI_STUBS = {1: '\$1-\$25k', 2: '\$25k-\$50k', 3: '\$50k-\$75k',
+             4: '\$75k-\$100k', 5: '\$100k-\$200k', 6: '\$200k+'}
+
+# Define data types for the IRS data. Codes should be mapped as a string
+# to avoid dropping leading 0's.
 COLUMN_DTYPES = {'STATEFIPS': np.str,
-           'STATE': np.str, 'zipcode': np.str,
-           'agi_stub': np.int64,
-           'N1': np.float64,
-           'MARS1': np.float64,
-           'MARS2': np.float64,
-           'MARS4': np.float64,
-           'NUMDEP': np.float64,
-           'A00100': np.float64,
-           'A02650': np.float64}
+                 'STATE': np.str,
+                 'zipcode': np.str,
+                 'agi_stub': np.int64,
+                 'N1': np.float64,
+                 'MARS1': np.float64,
+                 'MARS2': np.float64,
+                 'MARS4': np.float64,
+                 'NUMDEP': np.float64,
+                 'A00100': np.float64,
+                 'A02650': np.float64}
 
 ########################################################################
 # FUNCTIONS
