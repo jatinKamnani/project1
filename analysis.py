@@ -82,24 +82,24 @@ def main():
     # Plot pct obese vs. pct of tax returns filed in each agi_stub
     scatter_plots(joined_data, health_column='PCT_OBESE_ADULTS13',
                   income_column='N1_pct_of_FIPS', ylabel='Pct. Obese',
-                  filename='obese_scatter_N1.png')
+                  filename='obese_scatter_N1')
 
     # pct obese vs. pct of total people in each agi_stub
     scatter_plots(joined_data, health_column='PCT_OBESE_ADULTS13',
                   income_column='total_people_pct_of_FIPS',
                   ylabel='Pct. Obese',
-                  filename='obese_scatter_total_people.png')
+                  filename='obese_scatter_total_people')
 
     # pct diabetes vs. pct of tax returns filed in each agi_stub
     scatter_plots(joined_data, health_column='PCT_DIABETES_ADULTS13',
                   income_column='N1_pct_of_FIPS', ylabel='Pct. Diabetes',
-                  filename='diabetes_scatter_N1.png')
+                  filename='diabetes_scatter_N1')
 
     # pct diabetes vs. pct of total people in each agi_stb
     scatter_plots(joined_data, health_column='PCT_DIABETES_ADULTS13',
                   income_column='total_people_pct_of_FIPS',
                   ylabel='Pct. Diabetes',
-                  filename='diabetes_scatter_total_people.png')
+                  filename='diabetes_scatter_total_people')
 
     # Compute approximate mean and median income per person in each FIPS
     # code, and create scatter plots with diabetes/obesity.
