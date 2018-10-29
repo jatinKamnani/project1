@@ -192,7 +192,7 @@ def scatter_plots(data, health_column, income_column, ylabel, filename):
         ax.add_artist(txt)
 
         ax.set_ylabel(ylabel)
-        ax.set_xlabel('Pct. in AGI Stub')
+        ax.set_xlabel('Pct. in AGI Bracket')
         t = 'AGI: {}'
         ax.set_title(t.format(read_irs.AGI_STUBS[s]))
 
@@ -226,6 +226,7 @@ def scatter_plots(data, health_column, income_column, ylabel, filename):
     plt.tight_layout(pad=0.05, h_pad=0, w_pad=0.2)
     # TODO: Save .eps for report.
     plt.savefig(filename + '.png')
+    plt.savefig(filename + '.eps', type='eps')
 
 def scatter_mean_medians(data):
     """"""
@@ -259,6 +260,7 @@ def scatter_mean_medians(data):
     ax.set_xlabel('Mean AGI per Person (/$)')
     plt.tight_layout(pad=0.05, h_pad=0, w_pad=0)
     plt.savefig('mean_agi_diabetes.png')
+    plt.savefig('mean_agi_diabetes.eps')
 
     # Scatter for obesity
     fig, ax = plt.subplots(1, 1)
@@ -279,6 +281,7 @@ def scatter_mean_medians(data):
     ax.set_xlabel('Mean AGI per Person (/$)')
     plt.tight_layout(pad=0.05, h_pad=0, w_pad=0)
     plt.savefig('mean_agi_obese.png')
+    plt.savefig('mean_agi_obese.eps', type='eps')
 
     # Compute median of means.
     total_groups = data[['FIPS', 'agi_stub', 'total_people',
@@ -321,6 +324,7 @@ def scatter_mean_medians(data):
     ax.set_xlabel('Median Mean AGI per Person (/$)')
     plt.tight_layout(pad=0.05, h_pad=0, w_pad=0)
     plt.savefig('median_mean_agi_diabetes.png')
+    plt.savefig('median_mean_agi_diabetes.eps', type='eps')
 
     # Obesity:
     fig, ax = plt.subplots(1, 1)
@@ -341,6 +345,7 @@ def scatter_mean_medians(data):
     ax.set_xlabel('Median Mean AGI per Person (/$)')
     plt.tight_layout(pad=0.05, h_pad=0, w_pad=0)
     plt.savefig('median_mean_agi_obese.png')
+    plt.savefig('median_mean_agi_obese.eps', type='eps')
 
 
 ########################################################################
