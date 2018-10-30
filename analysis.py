@@ -75,7 +75,7 @@ def main():
         nan_rows, total_rows))
 
     # Create maps for the various health factors.
-    map_plots(joined_data)
+    # map_plots(joined_data)
 
     # Create scatter plots:
 
@@ -115,13 +115,21 @@ def map_plots(data):
     """
     # Plot percentage of lowest income people.
     agi1_bool = data['agi_stub'] == 1
-    # Max pct for this on is 61.22
-    agi1_pct = (data['total_people_pct_of_FIPS'][agi1_bool] * 100).tolist()
+    agi1_data = data['total_people_pct_of_FIPS'][agi1_bool] * 100
+    agi1_pct = (agi1_data).tolist()
     agi1_fips = data['FIPS'][agi1_bool].tolist()
-    pct_bins = list(np.arange(10, 70, 10))
+    # agi_lin = (agi1_data.max() - agi1_data.min()) / 5
+    # pct_bins = np.linspace(agi1_data.min() + agi_lin,
+    #                        agi1_data.max() - agi_lin,
+    #                        num=5).tolist()
+    pct_bins = np.percentile(agi1_data, [20, 40, 60, 80]).tolist()
+
     # colors from http://colorbrewer2.org
-    colorscale = ['#f0f9e8', '#ccebc5', '#a8ddb5', '#7bccc4', '#4eb3d3',
-                  '#2b8cbe', '#08589e']
+    # colorscale = ['#f0f9e8', '#ccebc5', '#a8ddb5', '#7bccc4', '#4eb3d3',
+    #               '#2b8cbe', '#08589e']
+    # colorscale = ['#f0f9e8', '#ccebc5', '#a8ddb5', '#7bccc4', '#43a2ca',
+    #               '#0868ac']
+    colorscale = ['#f0f9e8', '#bae4bc', '#7bccc4', '#43a2ca', '#0868ac']
     fig = ff.create_choropleth(fips=agi1_fips, values=agi1_pct,
                                round_legend_values=True,
                                binning_endpoints=pct_bins,
@@ -132,12 +140,14 @@ def map_plots(data):
 
     # Plot diabetes. We can still use agi1_bool - the diabetes rate is
     # the same for all agi_stubs.
-    diabetes_pct = data['PCT_DIABETES_ADULTS13'][agi1_bool].tolist()
+    diabetes_data = data['PCT_DIABETES_ADULTS13'][agi1_bool]
+    diabetes_pct = diabetes_data.tolist()
     # We'll re-use the agi1_fips.
     # New pct_bins (max for diabetes is 23.5:
-    pct_bins = list(np.arange(5, 26, 5))
-    colorscale = ['#f0f9e8', '#ccebc5', '#a8ddb5', '#7bccc4', '#43a2ca',
-                  '#0868ac']
+    # diabetes_lin = (diabetes_data.max() - diabetes_data.min()) / 5
+    # pct_bins = np.linspace(diabetes_data.min() + diabetes_lin,
+    #                        diabetes_data.max() - diabetes_lin, num=5).tolist()
+    pct_bins = np.percentile(diabetes_data, [20, 40, 60, 80]).tolist()
     fig = ff.create_choropleth(fips=agi1_fips, values=diabetes_pct,
                                round_legend_values=True,
                                binning_endpoints=pct_bins,
@@ -146,12 +156,14 @@ def map_plots(data):
     plotly.offline.plot(fig, filename='pct_diabetes.html')
 
     # Plot obesity.
-    obesity_pct = data['PCT_OBESE_ADULTS13'][agi1_bool].tolist()
+    obesity_data = data['PCT_OBESE_ADULTS13'][agi1_bool]
+    obesity_pct = obesity_data.tolist()
     # We'll re-use the agi1_fips.
     # New pct_bins (max for obesity is 47.6:
-    pct_bins = list(np.arange(8, 50, 8))
-    colorscale = ['#f0f9e8', '#ccebc5', '#a8ddb5', '#7bccc4', '#4eb3d3',
-                  '#2b8cbe', '#08589e']
+    # obesity_lin = (obesity_data.max() - obesity_data.min()) / 5
+    # pct_bins = np.linspace(obesity_data.min() + obesity_lin,
+    #                        obesity_data.max() - obesity_lin, num=5).tolist()
+    pct_bins = np.percentile(obesity_data, [20, 40, 60, 80]).tolist()
     fig = ff.create_choropleth(fips=agi1_fips, values=obesity_pct,
                                round_legend_values=True,
                                binning_endpoints=pct_bins,
@@ -186,6 +198,7 @@ def scatter_plots(data, health_column, income_column, ylabel, filename):
         # here, as our data isn't Gaussian.
         pr, _ = pearsonr(pct_in_fips, health_data)
         sr, _ = spearmanr(pct_in_fips, health_data)
+        print('')
         corr_text = 'Pearson: {:.2f}\nSpearman: {:.2f}'.format(pr, sr)
         txt = AnchoredText(corr_text, loc='upper center', prop=FONT_PROPERTIES,
                            frameon=False, pad=0, borderpad=0.2)
@@ -257,7 +270,7 @@ def scatter_mean_medians(data):
     ax.add_artist(txt)
 
     ax.set_ylabel('Pct. Diabetes')
-    ax.set_xlabel('Mean AGI per Person (/$)')
+    ax.set_xlabel('Mean AGI per Person ($)')
     plt.tight_layout(pad=0.05, h_pad=0, w_pad=0)
     plt.savefig('mean_agi_diabetes.png')
     plt.savefig('mean_agi_diabetes.eps')
@@ -278,7 +291,7 @@ def scatter_mean_medians(data):
     ax.add_artist(txt)
 
     ax.set_ylabel('Pct. Obese')
-    ax.set_xlabel('Mean AGI per Person (/$)')
+    ax.set_xlabel('Mean AGI per Person ($)')
     plt.tight_layout(pad=0.05, h_pad=0, w_pad=0)
     plt.savefig('mean_agi_obese.png')
     plt.savefig('mean_agi_obese.eps', type='eps')
@@ -321,7 +334,7 @@ def scatter_mean_medians(data):
     ax.add_artist(txt)
 
     ax.set_ylabel('Pct. Diabetes')
-    ax.set_xlabel('Median Mean AGI per Person (/$)')
+    ax.set_xlabel('Median Mean AGI per Person ($)')
     plt.tight_layout(pad=0.05, h_pad=0, w_pad=0)
     plt.savefig('median_mean_agi_diabetes.png')
     plt.savefig('median_mean_agi_diabetes.eps', type='eps')
@@ -342,7 +355,7 @@ def scatter_mean_medians(data):
     ax.add_artist(txt)
 
     ax.set_ylabel('Pct. Obese')
-    ax.set_xlabel('Median Mean AGI per Person (/$)')
+    ax.set_xlabel('Median Mean AGI per Person ($)')
     plt.tight_layout(pad=0.05, h_pad=0, w_pad=0)
     plt.savefig('median_mean_agi_obese.png')
     plt.savefig('median_mean_agi_obese.eps', type='eps')
